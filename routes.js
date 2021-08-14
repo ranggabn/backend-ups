@@ -47,5 +47,6 @@ module.exports = function (app) {
   app.route("/tampilPembelian").get(jsonku.tampilPembelian);
   app.route("/hapusPembelian").delete(jsonku.hapusPembelian);
   app.route("/ubahBarang2").put(jsonku.ubahBarang2);
+  app.route("/ubahBarang3").put(jsonku.ubahbarang3);
 };
 

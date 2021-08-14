@@ -198,16 +198,13 @@ exports.ubahPihutang = function (req, res) {
 /*=================Barang=================*/
 //menampilkan semua data pihutang
 exports.tampilBarang = function (req, res) {
-  connection.query(
-    "SELECT * FROM barang",
-    function (error, rows, field) {
-      if (error) {
-        console.log(error);
-      } else {
-        response.ok(rows, res);
-      }
+  connection.query("SELECT * FROM barang", function (error, rows, field) {
+    if (error) {
+      console.log(error);
+    } else {
+      response.ok(rows, res);
     }
-  );
+  });
 };
 
 //menampilkann berdasarkan id
@@ -314,16 +311,13 @@ exports.ubahKeranjang = function (req, res) {
 };
 
 exports.hapusKeranjang = function (req, res) {
-  connection.query(
-    "DELETE FROM keranjang",
-    function (error, rows, field) {
-      if (error) {
-        console.log(error);
-      } else {
-        response.ok("Berhasil hapus data", res);
-      }
+  connection.query("DELETE FROM keranjang", function (error, rows, field) {
+    if (error) {
+      console.log(error);
+    } else {
+      response.ok("Berhasil hapus data", res);
     }
-  );
+  });
 };
 
 exports.hapusKeranjangId = function (req, res) {
@@ -361,7 +355,7 @@ exports.tambahPenjualan = function (req, res) {
       kode: req.body.kode,
       jumlah: req.body.jumlah,
       total: req.body.total,
-      tanggal: req.body.tanggal,      
+      tanggal: req.body.tanggal,
     },
   ];
   connection.query(
@@ -370,8 +364,8 @@ exports.tambahPenjualan = function (req, res) {
       values.map((values) => [
         values.kode,
         values.jumlah,
-        values.total,        
-        values.tanggal
+        values.total,
+        values.tanggal,
       ]),
     ],
     function (error, rows, field) {
@@ -384,7 +378,7 @@ exports.tambahPenjualan = function (req, res) {
   );
 };
 
-exports.tampilPenjualan= function (req, res) {
+exports.tampilPenjualan = function (req, res) {
   connection.query(
     "SELECT * FROM penjualan JOIN barang WHERE penjualan.kode = barang.kode ORDER BY penjualan.id_penjualan DESC",
     function (error, rows, field) {
@@ -512,6 +506,22 @@ exports.ubahBarang2 = function (req, res) {
   connection.query(
     "UPDATE barang SET kode = ?, nama = ?, stok = ? WHERE kode = ?",
     [kode, nama, stok, kode],
+    function (error, rows, field) {
+      if (error) {
+        console.log(error);
+      } else {
+        response.ok("Berhasil Mengubah Data!", res);
+      }
+    }
+  );
+};
+
+exports.ubahbarang3 = function (req, res) {
+  var kode = req.body.kode;
+  var stok = req.body.stok;
+  connection.query(
+    "UPDATE barang set stok = ? WHERE kode = ?",
+    [stok,kode],
     function (error, rows, field) {
       if (error) {
         console.log(error);
