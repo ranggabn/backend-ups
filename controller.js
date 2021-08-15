@@ -232,9 +232,10 @@ exports.ubahBarang = function (req, res) {
   var diskon = req.body.diskon;
   var modal = req.body.modal;
   var jual = req.body.jual;
+  var bengkel = req.body.bengkel;
   connection.query(
-    "UPDATE barang SET kode = ?, nama = ?, stok = ?, pricelist = ?, diskon = ?, modal = ?, jual = ? WHERE kode = ?",
-    [kode, nama, stok, pricelist, diskon, modal, jual, kode],
+    "UPDATE barang SET kode = ?, nama = ?, stok = ?, pricelist = ?, diskon = ?, modal = ?, jual = ?, bengkel = ? WHERE kode = ?",
+    [kode, nama, stok, pricelist, diskon, modal, jual, bengkel, kode],
     function (error, rows, field) {
       if (error) {
         console.log(error);
@@ -416,10 +417,11 @@ exports.tambahBarang = function (req, res) {
   var diskon = req.body.diskon;
   var modal = req.body.modal;
   var jual = req.body.jual;
+  var bengkel = req.body.bengkel;
   var tanggal_beli = req.body.tanggal_beli;
   connection.query(
-    "INSERT INTO barang (kode, nama, stok, pricelist, diskon, modal, jual, tanggal_beli) VALUES (?,?,?,?,?,?,?,?)",
-    [kode, nama, stok, pricelist, diskon, modal, jual, tanggal_beli],
+    "INSERT INTO barang (kode, nama, stok, pricelist, diskon, modal, jual, bengkel, tanggal_beli) VALUES (?,?,?,?,?,?,?,?,?)",
+    [kode, nama, stok, pricelist, diskon, modal, jual, bengkel, tanggal_beli],
     function (error, rows, field) {
       if (error) {
         console.log(error);
@@ -438,10 +440,11 @@ exports.tambahPembelian = function (req, res) {
   var diskon = req.body.diskon;
   var modal = req.body.modal;
   var jual = req.body.jual;
+  var bengkel = req.body.bengkel;
   var tanggal_beli = req.body.tanggal_beli;
   connection.query(
-    "INSERT INTO pembelian (kode, nama, stok, pricelist, diskon, modal, jual, tanggal_beli) VALUES (?,?,?,?,?,?,?,?)",
-    [kode, nama, stok, pricelist, diskon, modal, jual, tanggal_beli],
+    "INSERT INTO pembelian (kode, nama, stok, pricelist, diskon, modal, jual, bengkel, tanggal_beli) VALUES (?,?,?,?,?,?,?,?,?)",
+    [kode, nama, stok, pricelist, diskon, modal, jual, bengkel, tanggal_beli],
     function (error, rows, field) {
       if (error) {
         console.log(error);
@@ -527,6 +530,22 @@ exports.ubahbarang3 = function (req, res) {
         console.log(error);
       } else {
         response.ok("Berhasil Mengubah Data!", res);
+      }
+    }
+  );
+};
+
+//tampil user
+exports.tampiluserid = function (req, res) {
+  let username = req.params.username;
+  connection.query(
+    "SELECT * FROM user WHERE username = ?",
+    [username],
+    function (error, rows, field) {
+      if (error) {
+        console.log(error);
+      } else {
+        response.ok(rows, res);
       }
     }
   );

@@ -11,7 +11,7 @@ exports.reqistrasi = function (req, res) {
   var post = {
     username: req.body.username,
     password: md5(req.body.password),
-    role: 1
+    role: 1,
   };
 
   var query = "SELECT username FROM ?? WHERE ??=?";
@@ -42,57 +42,134 @@ exports.reqistrasi = function (req, res) {
 };
 
 //controller login
-exports.login = function(req, res){
-    var post = {
-        password: req.body.password,
-        username: req.body.username,
-    }
+exports.login = function (req, res) {
+  var post = {
+    password: req.body.password,
+    username: req.body.username,
+  };
 
-    var query = "SELECT * FROM ?? WHERE ??=? AND ??=?";
-    var table =["user", "password", md5(post.password), "username", post.username];
+  var query = "SELECT * FROM ?? WHERE ??=? AND ??=?";
+  var table = [
+    "user",
+    "password",
+    md5(post.password),
+    "username",
+    post.username,
+  ];
 
-    query = mysql.format(query, table);
-    connection.query(query, function(error, rows){
-        if(error){
+  query = mysql.format(query, table);
+  connection.query(query, function (error, rows) {
+    if (error) {
+      console.log(error);
+    } else {
+      if (rows.length == 1) {
+        var token = jwt.sign({ rows }, config.secret, {
+          expiresIn: "30000",
+        });
+        username = rows[0].username;
+        role = rows[0].role;
+
+        var expired = 30000;
+
+        var data = {
+          username: username,
+          access_token: token,
+          ip_address: ip.address(),
+        };
+
+        var query = "INSERT INTO ?? SET ?";
+        var table = ["akses_token"];
+
+        query = mysql.format(query, table);
+        connection.query(query, data, function (error, rows) {
+          if (error) {
             console.log(error);
-        }else{
-            if(rows.length == 1){
-                var token = jwt.sign({rows}, config.secret, {
-                    expiresIn: '30000'
-                });                
-                username = rows[0].username;
-                role = rows[0].role;
+          } else {
+            res.json({
+              success: true,
+              message: "Token JWT tergenerate",
+              token: token,
+              expires: expired,
+              currUser: data.username,
+              user: username,
+              role: role,
+            });
+          }
+        });
+      } else {
+        res.json({ Error: true, Message: "username atau password anda salah" });
+      }
+    }
+  });
+};
 
-                var expired = 30000
+exports.ubahpassword = function (req, res) {
+  var data = {
+    username: req.body.username,
+    currpassword: md5(req.body.currpassword),
+    newpassword: md5(req.body.newpassword),
+  };
 
-                var data = {
-                    username: username,
-                    access_token: token,
-                    ip_address: ip.address()
+  var query = "SELECT username, password FROM ?? WHERE ??=?";
+  var table = ["user", "username", data.username];
+
+  query = mysql.format(query, table);
+
+  connection.query(query, function (error, rows) {
+    if (error) {
+      console.log(error);
+    } else {
+      if (rows.length == 1) {
+        username = rows[0].username;
+        password = rows[0].password;
+
+        if (data.currpassword == password) {
+          if (data.newpassword == data.currpassword) {
+            res
+              .json({
+                success: false,
+                message: "Password masih sama dengan yang sebelumnya!",
+              })
+              .end();
+          } else {
+            connection.query(
+              "UPDATE user SET password=? WHERE username=?",
+              [data.newpassword, username],
+              function (error) {
+                if (error) {
+                  res
+                    .json({
+                      success: false,
+                      message: error,
+                    })
+                    .end();
+                } else {
+                  res
+                    .json({
+                      success: true,
+                      message: "Berhasil melakukan perubahan password!",
+                    })
+                    .end();
                 }
-
-                var query = "INSERT INTO ?? SET ?";
-                var table =["akses_token"]
-
-                query = mysql.format(query, table);
-                connection.query(query, data, function(error, rows){
-                    if(error){
-                        console.log(error);
-                    }else{
-                         res.json({
-                             success: true,
-                             message: "Token JWT tergenerate",
-                             token: token,
-                             expires: expired,
-                             currUser: data.username,
-                             user: username,
-                             role: role,
-                         });
-                    }
-                });
-            }else{
-                 res.json({"Error" : true, "Message":"username atau password anda salah"});
-            }
+              }
+            );
+          }
+        } else {
+          res
+            .json({
+              success: false,
+              message: "Password lama anda salah!",
+            })
+            .end();
         }
-    })
-}
+      } else {
+        res
+          .json({
+            success: false,
+            message: "User tidak tersedia",
+          })
+          .end();
+      }
+    }
+  });
+};
