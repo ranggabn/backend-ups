@@ -408,6 +408,22 @@ exports.hapusPenjualan = function (req, res) {
   );
 };
 
+//menghapus data barang berdasarkan id
+exports.hapusBarang = function (req, res) {
+  var kode = req.body.kode;
+  connection.query(
+    "DELETE FROM barang WHERE kode=?",
+    [kode],
+    function (error, rows, field) {
+      if (error) {
+        console.log(error);
+      } else {
+        response.ok("Berhasil hapus data", res);
+      }
+    }
+  );
+};
+
 // ================Pembelian==============
 exports.tambahBarang = function (req, res) {
   var kode = req.body.kode;
