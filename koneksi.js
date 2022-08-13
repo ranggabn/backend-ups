@@ -1,10 +1,11 @@
 var mysql = require('mysql');
 
 const conn = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: 'ranggabaghas12',
-    database: 'dbups'
+    host: 'remotemysql.com',
+    port: '3306',
+    user: 'mwoK6cXco9',
+    password: 'mPRdaz4fBF',
+    database: 'mwoK6cXco9'
 });
 
 conn.connect((err) => {
