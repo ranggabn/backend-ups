@@ -17,6 +17,6 @@ routes(app);
 
 app.use('/auth', require('./middleware'));
 
-app.listen(3001, () => {
-  console.log("Server started on port 3001");
+app.listen(process.env.PORT || 3001, function(){
+  console.log("Express server listening on port %d in %s mode", this.address().port, app.settings.env);
 });
