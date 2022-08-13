@@ -10,3 +10,5 @@ const pool = mysql.createPool({
 
 // ... later
 pool.query('select 1 + 1', (err, rows) => { /* */ });
+
+module.exports = pool;
